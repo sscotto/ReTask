@@ -8,9 +8,11 @@
 	<Authors>Sergio</Authors>
 	<Company>Sergio</Company>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Description>Class Library to Handle RetryPolicies.
+	<Description>Handle operations using retry policies.
 
-Can wait result or dispatch and forget.</Description>
+- Can wait for the result or dispatch and forget.
+- Can handle sucess event.
+- Can handle error on each attempt.</Description>
   </PropertyGroup>
 
 </Project>
