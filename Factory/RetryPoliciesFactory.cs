@@ -2,21 +2,21 @@
 
 namespace ReTask.Factory
 {
-    public static class RetryPoliciesFactory<Ttype> where Ttype : class
+    public static class RetryPoliciesFactory
     {
-        public static SimpleRetryPolicy<Ttype> CreateSimpleRetryPolicy(int maxAttempts, int baseSleepTime)
+        public static SimpleRetryPolicy CreateSimpleRetryPolicy(int maxAttempts, int baseSleepTime)
         {
-            return new SimpleRetryPolicy<Ttype>(maxAttempts, baseSleepTime);
+            return new SimpleRetryPolicy(maxAttempts, baseSleepTime);
         }
 
-        public static ExponentialRetryPolicy<Ttype> CreateExponentialRetryPolicy(int maxAttempts, int baseSleepTime, int power = 2)
+        public static ExponentialRetryPolicy CreateExponentialRetryPolicy(int maxAttempts, int baseSleepTime, int power = 2)
         {
-            return new ExponentialRetryPolicy<Ttype>(maxAttempts, baseSleepTime, power);
+            return new ExponentialRetryPolicy(maxAttempts, baseSleepTime, power);
         }
 
-        public static AddedRetryPolicy<Ttype> CreateAddedRetryPolicy(int maxAttempts, int baseSleepTime)
+        public static AddedRetryPolicy CreateAddedRetryPolicy(int maxAttempts, int baseSleepTime)
         {
-            return new AddedRetryPolicy<Ttype>(maxAttempts, baseSleepTime);
+            return new AddedRetryPolicy(maxAttempts, baseSleepTime);
         }
     }
 }
