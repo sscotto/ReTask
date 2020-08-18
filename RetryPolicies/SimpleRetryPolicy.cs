@@ -1,7 +1,6 @@
 ﻿namespace ReTask.RetryPolicies
 {
-    public class SimpleRetryPolicy<Ttype> : AbstractRetryPolicy<Ttype> 
-        where Ttype: class
+    public class SimpleRetryPolicy: AbstractRetryPolicy
     {
         public SimpleRetryPolicy(int maxAttempts, int baseSleepTime)
         {

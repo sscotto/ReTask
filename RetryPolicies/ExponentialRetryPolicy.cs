@@ -2,8 +2,7 @@
 
 namespace ReTask.RetryPolicies
 {
-    public class ExponentialRetryPolicy<Ttype> : AbstractRetryPolicy<Ttype>
-        where Ttype : class
+    public class ExponentialRetryPolicy: AbstractRetryPolicy  
     {
         private double _power;
         public ExponentialRetryPolicy(int maxAttempts, int baseSleepTime, double power = 2)

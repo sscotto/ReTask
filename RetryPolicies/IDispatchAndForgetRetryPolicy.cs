@@ -2,8 +2,10 @@
 
 namespace ReTask.RetryPolicies
 {
-    public interface IDispatchAndForgetRetryPolicy<Ttype> where Ttype : class
+    public interface IDispatchAndForgetRetryPolicy
     {
-        void DispatchAndForget(Func<Ttype> func);
+        void DispatchAndForget(Action action, Action handleSuccess);
+
+        void DispatchAndForget(Action action);
     }
 }

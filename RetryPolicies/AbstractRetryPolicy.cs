@@ -1,38 +1,51 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ReTask.RetryPolicies
 {
-    public abstract class AbstractRetryPolicy<Ttype> : 
-        IRetryPolicy<Ttype>, 
-        IDispatchAndForgetRetryPolicy<Ttype>
-        where Ttype : class
+    public abstract class AbstractRetryPolicy:
+        IRetryPolicy,
+        IDispatchAndForgetRetryPolicy,
+        IFetchRetryPolicy
     {
         protected int _currentAttempt = 0;
         protected int _maxAttemps;
         protected int _baseSleepTime;
         public Action<Exception> onAttempError;
-        public Action<Ttype> onSuccess;
-        public void Execute(Func<Ttype> func)
+
+        public void Dispatch(Action action, Action handleSuccess)
         {
-            DoExecute(func);
+            DoExecute(action, handleSuccess);
         }
 
-        public void DispatchAndForget(Func<Ttype> func)
+        public void Dispatch(Action action)
         {
-            Task.Run(() => DoExecute(func));                        
+            DoExecute(action, null);
+        }
+
+        public void DispatchAndForget(Action action, Action handleSuccess)
+        {
+            Task.Run(() => DoExecute(action, handleSuccess));                        
             return;      
         }
 
-        private void DoExecute(Func<Ttype> action)
+        public void DispatchAndForget(Action action)
+        {
+            Task.Run(() => DoExecute(action, null));
+            return;
+        }
+
+        private void DoExecute(Action action, Action handleSuccess)
         {
             _currentAttempt = 0;
             do
             {
                 try
-                {                    
-                    Ttype returnedObject = action();
-                    onSuccess?.Invoke(returnedObject);
+                {
+                    action();
+                    handleSuccess?.Invoke();
                     return;
                 }
                 catch (Exception ex)
@@ -42,7 +55,29 @@ namespace ReTask.RetryPolicies
                     System.Threading.Thread.Sleep(sleepTime);
                 }
                 _currentAttempt++;
-            } while (_currentAttempt < _maxAttemps);              
+            } while (_currentAttempt < _maxAttemps);
+        }
+
+        public Ttype Fetch<Ttype>(Func<Ttype> fetch, Action<Ttype> handleSuccess) where Ttype : class
+        {
+            _currentAttempt = 0;
+            do
+            {
+                try
+                {
+                    Ttype returnedObject = fetch();
+                    handleSuccess?.Invoke(returnedObject);                   
+                    return returnedObject;
+                }
+                catch (Exception ex)
+                {
+                    int sleepTime = CalculateSleepTime();
+                    onAttempError?.Invoke(ex);
+                    System.Threading.Thread.Sleep(sleepTime);
+                }
+                _currentAttempt++;
+            } while (_currentAttempt < _maxAttemps);
+            return null;
         }
 
         protected abstract int CalculateSleepTime();
